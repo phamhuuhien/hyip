@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>Account Manager</title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1,  minimum-scale=1, maximum-scale=1">
+<script src="js/libs/angular.min.js"></script>
+<style>
+.container{
+    display: flex;
+    flex-flow: row wrap;
+    align-content : center;
+    justify-content : center;
+    align-items : center;
+}
+
+.container .item {
+    flex-basis: 16%;
+}
+
+.header{
+    text-align: center;
+}
+</style>
+</head>
+
+<body ng-app="myApp" ng-controller="listAccountControl" style="background-color: cornsilk; margin: 10px;">
+
+<div class="app-wrapper">
+<header>
+<h1> Account Management</h1>
+</header>
+<div class="contentbox">
+	<div class='container'>
+		<label class='item header'>hyipUrl</label>
+		<label class='item header'>username</label>
+		<label class='item header'>password</label>
+		<label class='item header'>hourly</label>
+		<label class='item header'>time</label>
+		<div class='item header'>action</div>
+	</div>
+	<div ng-repeat="account in accounts"  class='container'>
+		<input type="text" class='item' name="hyipUrl" ng-model="account.hyipUrl" />
+		<input type="text" class='item' name="username" ng-model="account.username" />
+		<input type="text" class='item' name="password" ng-model="account.password" />
+		<input type="text" class='item' name="hourly" ng-model="account.hourly" />
+		<input type="text" class='item' name="time" ng-model="account.time" />
+		<div  class='item'>
+			<button type="button" ng-click="save(account)">Save</button> 
+			<button type="button" ng-click="delete(account.hyipUrl)">Delete</button>
+		</div>
+	</div>
+	<br/>
+	<div>
+		<button type="button" ng-click="add()">Add</button> 
+	</div>
+</div>
+
+</div>
+</div>
+</body>
+<script src="js/app.js"></script>
