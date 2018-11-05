@@ -17,7 +17,7 @@
 }
 
 .container .item {
-    flex-basis: 16%;
+    flex-basis: 13%;
 	margin: 2px;
 }
 
@@ -36,6 +36,7 @@
 <div class="contentbox">
 	<div class='container'>
 		<label class='item header'>hyipUrl</label>
+		<label class='item header'>loginUrl</label>
 		<label class='item header'>username</label>
 		<label class='item header'>password</label>
 		<label class='item header'>hourly</label>
@@ -44,6 +45,7 @@
 	</div>
 	<div ng-repeat="account in accounts"  class='container'>
 		<input type="text" class='item' name="hyipUrl" ng-model="account.hyipUrl" />
+		<input type="text" class='item' name="loginUrl" ng-model="account.loginUrl" />
 		<input type="text" class='item' name="username" ng-model="account.username" />
 		<input type="text" class='item' name="password" ng-model="account.password" />
 		<input type="text" class='item' name="hourly" ng-model="account.hourly" />
