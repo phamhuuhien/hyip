@@ -13,6 +13,8 @@
   "dependencies": {
     "await-sleep": "0.0.1",
     "express": "^4.16.4",
+    "node-cron": "^2.0.3",
+    "node-crontab": "0.0.8",
     "node-html-parser": "^1.1.10",
     "nodemailer": "^4.6.8",
     "request": "^2.88.0"

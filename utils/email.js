@@ -15,7 +15,9 @@ var mailOptions = {
     text: 'That was easy!'
 };
 
-function sendMail(message) {
+function sendMail(title, message) {
+    mailOptions.subject = title;
+    mailOptions.text = message;
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);
