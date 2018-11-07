@@ -3,21 +3,22 @@ var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'daicaca311@gmail.com',
-        pass: 'thuoctay'
+        user: 'autowithdrawhyip',
+        pass: 'autohyip113'
     }
 });
 
 var mailOptions = {
-    from: 'daicaca311@gmail.com',
-    to: 'h.studio87@gmail.com',
+    from: 'autowithdrawhyip@gmail.com',
+    to: 'xxxxxxxx',
     subject: 'Withdraw successful',
     text: 'That was easy!'
 };
 
-function sendMail(title, message) {
+function sendMail(address, title, message) {
     mailOptions.subject = title;
     mailOptions.text = message;
+    mailOptions.to = address;
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log(error);

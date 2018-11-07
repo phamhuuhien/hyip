@@ -93,7 +93,7 @@ async function confirmWithdraw(hyip, body, money) {
 			title = "Withdraw successful";
 			message = `Withdraw ${money} successful`;
 		}
-		sendMail(title, message);
+		sendMail(hyip.email, title, message);
 	});
 }
 
