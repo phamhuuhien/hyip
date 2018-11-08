@@ -31,7 +31,6 @@ angular.module('myApp', [])
 					alert('Error when saving account');
 				}
 			}, function errorCallback(response) {
-				console.log("response", response);
 				alert('Error when saving account');
 			});
 		}

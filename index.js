@@ -15,7 +15,6 @@ app.get('/', function (req, res) {
 
 app.get('/listaccount', function (req, res) {
 	res.setHeader('Content-Type', 'application/json');
-	console.log("accounts.find()", accounts.find());
 	res.send(JSON.stringify(accounts.find()));
 })
 

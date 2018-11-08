@@ -6,7 +6,7 @@ const sleep = require('await-sleep');
 function autoWithDraw(hyip) {
 	request(hyip.hyipUrl + '/?a=login', function (error, response, body) {
 		if (error)
-			console.error('connect site fail:', error);
+			return console.error('connect site fail:', error);
 
 		let formData = getFormData(body);
 		formData['username'] = hyip.username;
@@ -120,6 +120,9 @@ function getFormData(body) {
 function getAmountMoney(body) {
 	let root = parse(body.toString());
 	let table = root.querySelector("table");
+	if (!table || !table.childNodes || !table.childNodes[1] || !table.childNodes[1].childNodes)
+		return 0;
+
 	return parseFloat(table.childNodes[1].childNodes[3].toString().replace(/[^0-9\.]+/g,''), 0);
 }
 
