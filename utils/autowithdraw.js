@@ -1,7 +1,11 @@
 const { parse } = require('node-html-parser');
 var request = require('request');
-const { sendMail } = require('./email.js');
 const sleep = require('await-sleep');
+const cheerio = require('cheerio');
+
+const { sendMail } = require('./email.js');
+var { accounts } = require('./db.js');
+
 
 function autoWithDraw(hyip) {
 	request(hyip.hyipUrl + '/?a=login', function (error, response, body) {
@@ -13,12 +17,16 @@ function autoWithDraw(hyip) {
 		formData['password'] = hyip.password;
 
 		// login
-		request.post({ url: hyip.hyipUrl, formData: formData }, function optionalCallback(err, httpResponse, body) {
+		request.post({
+			url: hyip.hyipUrl, 
+			formData: formData,
+		 }, function optionalCallback(err, httpResponse, body) {
 			if (err)
 				return console.error('login fail:', err);
 
 			hyip.cookie = getCookies(httpResponse.headers['set-cookie'] + '');
 			dashboard(hyip);
+			//updateStatistics(hyip);
 		});
 	});
 }
@@ -46,6 +54,7 @@ async function performWithdraw(hyip, body) {
 	await sleep(1000);
 	let formData = getFormData(body);
 	let money = getAmountMoney(body);
+	console.log("money", money);
 	if (!money || money <= 0)
 		return;
 		
@@ -66,6 +75,7 @@ async function performWithdraw(hyip, body) {
 			return console.error('perform withdraw fail:', error);
 
 		confirmWithdraw(hyip, body, money);
+		//updateStatistics(hyip);
 	});
 }
 
@@ -84,16 +94,45 @@ async function confirmWithdraw(hyip, body, money) {
 		if (error)
 			return console.error('confirm withdraw fail:', error);
 
-		let title = '';
-		let message = '';
-		if (body.indexOf("Withdrawal request saved.") >= 0) {
-			title = "Withdraw pending";
-			message = "Pending. Oh shit";
-		} else {
-			title = "Withdraw successful";
-			message = `Withdraw ${money} successful`;
+		if (hyip.email) {
+			let title = '';
+			let message = '';
+			if (body.indexOf("Withdrawal request saved.") >= 0) {
+				title = `${hyip.hyipUrl} Withdraw pending`;
+				message = `Pending. Oh shit from account ${hyip.username}`;
+			} else {
+				title = `${hyip.hyipUrl} Withdraw successful`;
+				message = `Withdraw ${money} successful from account ${hyip.username}`;
+			}
+			sendMail(hyip.email, title, message);
 		}
-		sendMail(hyip.email, title, message);
+	});
+}
+
+function updateStatistics(hyip) {
+	request({
+		url: hyip.hyipUrl + '/?a=account',
+		headers: {
+			Cookie: hyip.cookie,
+		}
+	}, function (error, response, body) {
+		if (error)
+			return console.error('dashboard fail:', error);
+
+		const $ = cheerio.load(body.toString());
+		let totalWithdraw = parseFloat($('tr:contains("Total Withdrawal")').html().replace(/[^0-9\.]+/g,''));
+		let pendingWithdraw = parseFloat($('tr:contains("Pending Withdrawal")').html().replace(/[^0-9\.]+/g,''));
+
+		let updatingHyip = accounts.find({ hyipUrl: hyip.hyipUrl, username: hyip.username });
+		if (!updatingHyip || updatingHyip.length == 0)
+			return;
+
+		updatingHyip[0].statistics = {
+			totalWithdraw,
+			pendingWithdraw,
+		};
+
+		accounts.update(updatingHyip[0]);
 	});
 }
 
@@ -118,12 +157,14 @@ function getFormData(body) {
 }
 
 function getAmountMoney(body) {
-	let root = parse(body.toString());
-	let table = root.querySelector("table");
-	if (!table || !table.childNodes || !table.childNodes[1] || !table.childNodes[1].childNodes)
-		return 0;
+	// let root = parse(body.toString());
+	// let table = root.querySelector("table");
+	// if (!table || !table.childNodes || !table.childNodes[1] || !table.childNodes[1].childNodes)
+	// 	return 0;
 
-	return parseFloat(table.childNodes[1].childNodes[3].toString().replace(/[^0-9\.]+/g,''), 0);
+	// return parseFloat(table.childNodes[1].childNodes[3].toString().replace(/[^0-9\.]+/g,''), 0);
+	const $ = cheerio.load(body.toString());
+	return parseFloat($('tr:contains("Account Balance")').html().replace(/[^0-9\.]+/g,''));
 }
 
 module.exports.autoWithDraw = autoWithDraw;

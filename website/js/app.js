@@ -22,7 +22,7 @@ angular.module('myApp', [])
 		$scope.save = function (account) {
 			$http({
 				method: 'GET',
-				url: '/saveaccount/?hyipurl=' + account.hyipUrl + '&loginurl=' + account.loginUrl + '&username=' + account.username + '&password=' + account.password + '&time=' + account.time + '&email=' + account.email
+				url: '/saveaccount/?hyipurl=' + account.hyipUrl + '&username=' + account.username + '&password=' + account.password + '&email=' + account.email
 			}).then(function successCallback(response) {
 				if (response && response.data && response.data.hyipUrl) {
 					alert('Saved successfully');

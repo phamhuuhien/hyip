@@ -1,13 +1,10 @@
 var express = require('express');
 var cron = require('node-cron');
-var loki = require('lokijs');
 const { autoWithDraw } = require('./utils/autowithdraw.js');
+var { accounts } = require('./utils/db.js');
 
 var app = express()
 app.use('/website', express.static('website'))
-
-var db = new loki('loki.json')
-var accounts = db.addCollection('accounts')
 
 app.get('/', function (req, res) {
 	res.send('Hello World')
@@ -15,6 +12,7 @@ app.get('/', function (req, res) {
 
 app.get('/listaccount', function (req, res) {
 	res.setHeader('Content-Type', 'application/json');
+	console.log(accounts.find());
 	res.send(JSON.stringify(accounts.find()));
 })
 
@@ -30,8 +28,6 @@ app.get('/saveaccount', function (req, res) {
 	else hyip.email = 0;
 	if (req.query.time) hyip.time = req.query.time;
 	else hyip.time = new Date().getMilliseconds() + 60 * 60 * 1000;
-	if (req.query.loginurl) hyip.loginUrl = req.query.loginurl;
-	else hyip.loginUrl = '';
 
 	let editing = accounts.find({ 'hyipUrl': hyip.hyipUrl, 'username': hyip.username });
 	if (editing.length > 0) {
@@ -39,6 +35,7 @@ app.get('/saveaccount', function (req, res) {
 	}
 
 	accounts.insert(hyip);
+	console.log("add account: " + hyip.hyipUrl + " username: " + hyip.username);
 
 	res.setHeader('Content-Type', 'application/json');
 	res.send(JSON.stringify(hyip));
@@ -58,10 +55,10 @@ app.get('/deleteaccount', function (req, res) {
 app.listen(80);
 console.log("Server start: port 80");
 
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/5 * * * *', () => {
 	let accountsProcessing = accounts.find();
 	console.log("account length", accountsProcessing.length);
-	await accountsProcessing.forEach(account => {
+	accountsProcessing.forEach(account => {
 		let currrentTime = new Date().getMilliseconds();
 		//if (account.time < currrentTime) {
 		console.log(`withdraw account ${account.username} from ${account.hyipUrl}`);
@@ -74,3 +71,11 @@ cron.schedule('*/5 * * * *', async () => {
 		//}
 	});
 });
+
+// let account = {
+// 	hyipUrl: 'https://nettinvest.com',
+// 	username: 'daicaca',
+// 	password: 'thuoctay'
+// }
+
+// autoWithDraw(account);

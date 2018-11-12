@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "await-sleep": "0.0.1",
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.4",
     "lokijs": "^1.5.5",
     "node-cron": "^2.0.3",
