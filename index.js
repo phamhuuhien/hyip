@@ -16,17 +16,13 @@ app.get('/listaccount', function (req, res) {
 })
 
 app.get('/saveaccount', function (req, res) {
-	var hyip = {};
-	if (req.query.hyipurl) hyip.hyipUrl = req.query.hyipurl;
-	else hyip.hyipUrl = '';
-	if (req.query.username) hyip.username = req.query.username;
-	else hyip.username = '';
-	if (req.query.password) hyip.password = req.query.password;
-	else hyip.password = '';
-	if (req.query.email) hyip.email = req.query.email;
-	else hyip.email = 0;
-	if (req.query.time) hyip.time = req.query.time;
-	else hyip.time = new Date().getMilliseconds() + 60 * 60 * 1000;
+	var hyip = {
+		hyipUrl: req.query.hyipurl,
+		username: req.query.username,
+		password: req.query.password,
+		email: req.query.email,
+		time: new Date().getMilliseconds() + 60 * 60 * 1000,
+	};
 
 	let editing = accounts.find({ 'hyipUrl': hyip.hyipUrl, 'username': hyip.username });
 	if (editing.length > 0) {
@@ -34,7 +30,7 @@ app.get('/saveaccount', function (req, res) {
 	}
 
 	accounts.insert(hyip);
-	console.log("add account: " + hyip.hyipUrl + " username: " + hyip.username);
+	console.log("add hyip", hyip);
 
 	res.setHeader('Content-Type', 'application/json');
 	res.send(JSON.stringify(hyip));

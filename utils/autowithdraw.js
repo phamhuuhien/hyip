@@ -15,6 +15,7 @@ function autoWithDraw(hyip) {
 		}, errHandler)
 		.then(function (cookie) {
 			hyip.cookie = cookie;
+			updateStatistics(hyip);
 			return dashboard(hyip);
 		}, errHandler)
 		.then(function (body) {
@@ -46,7 +47,6 @@ function autoWithDraw(hyip) {
 					message = `Pending. Oh shit from account ${hyip.username}`;
 				}
 				sendMail(hyip.email, title, message);
-				updateStatistics(hyip);
 			}
 		}, errHandler)
 		.catch(function (error) {
@@ -160,9 +160,6 @@ function confirmWithdraw(hyip, formData) {
 }
 
 function updateStatistics(hyip) {
-	if (!hyip.statisticsClass)
-		return;
-
 	request({
 		url: hyip.hyipUrl + '/?a=account',
 		headers: {
@@ -173,21 +170,13 @@ function updateStatistics(hyip) {
 			return console.error('dashboard fail:', error);
 
 		const $ = cheerio.load(body.toString());
-		let inforText = $(`.${hyip.statisticsClass}`);
-		if (!inforText)
-			return;
-		
 		let totalWithdraw = 0;
 		let pendingWithdraw = 0;
 
-		inforText.text().split("\n").forEach(infor => {
-			if (infor.search(/total/i) >= 0 && infor.search(/withdraw/i) >= 0) {
-				totalWithdraw = infor.replace(/[^0-9\.]+/g,'');
-			}
-
-			if (infor.search(/pending/) >= 0)
-				pendingWithdraw = infor.replace(/[^0-9\.]+/g,'');
-		});
+		let totalText = $("tr:contains(Withdrew Total), tr:contains(Withdraw Total), tr:contains(Total Withdraw)");
+		totalWithdraw = totalText ? totalText.text().replace(/[^0-9\.]+/g,'') : 0;
+		let pendingText = $("tr:contains(Pending Withdraw)");
+		pendingWithdraw = pendingText ? pendingText.text().replace(/[^0-9\.]+/g,'') : 0;
 
 		let updatingHyip = accounts.find({ hyipUrl: hyip.hyipUrl, username: hyip.username });
 		if (!updatingHyip || updatingHyip.length == 0)
