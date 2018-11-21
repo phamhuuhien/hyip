@@ -12,7 +12,6 @@ app.get('/', function (req, res) {
 
 app.get('/listaccount', function (req, res) {
 	res.setHeader('Content-Type', 'application/json');
-	console.log(accounts.find());
 	res.send(JSON.stringify(accounts.find()));
 })
 
@@ -73,9 +72,11 @@ cron.schedule('*/5 * * * *', () => {
 });
 
 // let account = {
-// 	hyipUrl: 'https://nettinvest.com',
-// 	username: 'daicaca',
-// 	password: 'thuoctay'
+// 	hyipUrl: 'https://travelfina.com',
+// 	username: 'heocon',
+// 	password: 'thuoctay',
+// 	email: 'h.studio87@gmail.com',
+// 	statisticsClass: 'accountsection',
 // }
 
 // autoWithDraw(account);
