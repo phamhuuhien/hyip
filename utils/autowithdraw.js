@@ -214,6 +214,9 @@ function getFormData(body) {
 function getAmountMoney(body) {
 	const $ = cheerio.load(body.toString());
 	let moneyText = $('tr:contains("Account Balance")').html();
+	
+	if (moneyText == null)
+		moneyText = $("tr:contains(PerfectMoney) > td:nth-child(3)").html();
 
 	if (moneyText == null)
 		moneyText = $("form").text().split("\n").filter(a => a.trim() !== "")[1];
