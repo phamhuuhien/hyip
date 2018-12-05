@@ -218,8 +218,9 @@ function getAmountMoney(body) {
 	if (moneyText == null)
 		moneyText = $("tr:contains(PerfectMoney) > td:nth-child(3)").html();
 
-	if (moneyText == null)
-		moneyText = $("form").text().split("\n").filter(a => a.trim() !== "")[1];
+	if (moneyText == null) {
+		moneyText = $("form div:contains(Balance)").last().text();
+	}
 	return moneyText ? moneyText.replace(/[^0-9\.]+/g,'') : 0;
 }
 
