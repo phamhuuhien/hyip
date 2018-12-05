@@ -174,8 +174,15 @@ function updateStatistics(hyip) {
 		let pendingWithdraw = 0;
 
 		let totalText = $("tr:contains(Withdrew Total), tr:contains(Withdraw Total), tr:contains(Total Withdraw)");
+		if (!totalText.length)
+			totalText = $("div:contains(Withdrew Total), div:contains(Withdraw Total), div:contains(Total Withdraw)").last();
+
 		totalWithdraw = totalText ? totalText.text().replace(/[^0-9\.]+/g,'') : 0;
+		
 		let pendingText = $("tr:contains(Pending Withdraw)");
+		if (!pendingText.length)
+			pendingText = $("div:contains(Pending Withdraw)").last();
+
 		pendingWithdraw = pendingText ? pendingText.text().replace(/[^0-9\.]+/g,'') : 0;
 
 		let updatingHyip = accounts.find({ hyipUrl: hyip.hyipUrl, username: hyip.username });
