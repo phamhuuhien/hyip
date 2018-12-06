@@ -174,14 +174,24 @@ function updateStatistics(hyip) {
 		let pendingWithdraw = 0;
 
 		let totalText = $("tr:contains(Withdrew Total), tr:contains(Withdraw Total), tr:contains(Total Withdraw)");
-		if (!totalText.length)
-			totalText = $("div:contains(Withdrew Total), div:contains(Withdraw Total), div:contains(Total Withdraw)").last();
+		if (!totalText.length) {
+			let $total = $("div:contains(Withdrew Total), div:contains(Withdraw Total), div:contains(Total Withdraw)");
+			totalText = $total.last();
+			if (totalText && totalText.text().indexOf("$") < 0)
+				totalText  = $($total.get($total.length - 2));
+		}
 
 		totalWithdraw = totalText ? totalText.text().replace(/[^0-9\.]+/g,'') : 0;
 		
 		let pendingText = $("tr:contains(Pending Withdraw)");
-		if (!pendingText.length)
-			pendingText = $("div:contains(Pending Withdraw)").last();
+		if (!pendingText.length) {
+			let $pending = $("div:contains(Pending Withdraw)");
+			pendingText = $pending.last();
+			if (pendingText && pendingText.text().indexOf("$") < 0)
+				pendingText = $($pending.get($pending.length - 2));
+		}
+
+		console.log("totalWithdraw", totalWithdraw);
 
 		pendingWithdraw = pendingText ? pendingText.text().replace(/[^0-9\.]+/g,'') : 0;
 
