@@ -26,7 +26,7 @@ function autoWithDraw(hyip) {
 				return Promise.reject("money == 0");
 			}
 
-			formData['amount'] = money;
+			formData['amount'] = money > 2 ? 2 : money;
 			formData['ec'] = '18';
 			formData['comment'] = '1234';
 			return performWithdraw(hyip, formData);
@@ -210,19 +210,20 @@ function updateStatistics(hyip) {
 
 function getFormData(body) {
 	let formData = {};
-	let root = parse(body.toString());
-	let form = root.querySelector("form");
+	const $ = cheerio.load(body.toString());
+	let form = $("form");
 	if (!form)
 		return;
 		
-	root.querySelector("form").childNodes.forEach(child => {
-		if (child.tagName != 'input' || child.rawAttrs.indexOf('hidden') < 0)
+	form.first().children("input").each( (i, child) => {
+		if (child.name !== 'input' || child.attribs.type !== 'hidden')
+			return;
+			
+
+		if (!child.attribs || !child.attribs["name"])
 			return;
 
-		if (!child.attributes || !child.attributes["name"])
-			return;
-
-		formData[child.attributes["name"]] = child.attributes["value"];
+		formData[child.attribs.name] = child.attribs.value;
 	});
 
 	return formData;

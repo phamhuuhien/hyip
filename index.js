@@ -68,11 +68,9 @@ cron.schedule('*/5 * * * *', () => {
 });
 
 // let account = {
-// 	hyipUrl: 'https://travelfina.com',
-// 	username: 'heocon',
+// 	hyipUrl: 'https://3hourly.biz',
+// 	username: 'ngaymoi3',
 // 	password: 'thuoctay',
-// 	email: 'h.studio87@gmail.com',
-// 	statisticsClass: 'accountsection',
 // }
 
 // autoWithDraw(account);
